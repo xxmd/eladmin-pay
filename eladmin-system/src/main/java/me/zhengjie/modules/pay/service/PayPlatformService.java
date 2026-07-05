@@ -3,6 +3,10 @@ package me.zhengjie.modules.pay.service;
 import me.zhengjie.modules.pay.entity.PayPlatform;
 import me.zhengjie.modules.pay.entity.query.PayPlatformQueryCriteria;
 import me.zhengjie.modules.pay.repository.PayPlatformRepository;
+import me.zhengjie.modules.pay.service.dto.PayPlatformDto;
+import me.zhengjie.modules.pay.service.mapstruct.PayPlatformMapper;
+import me.zhengjie.utils.PageResult;
+import me.zhengjie.utils.PageUtil;
 import me.zhengjie.utils.QueryHelp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -19,6 +23,8 @@ import java.util.Set;
 public class PayPlatformService {
     @Autowired
     private PayPlatformRepository repository;
+    @Autowired
+    private PayPlatformMapper mapper;
 
     public void create(@Validated @RequestBody PayPlatform entity) {
         repository.save(entity);
@@ -32,7 +38,11 @@ public class PayPlatformService {
         repository.save(entity);
     }
 
-    public Page<PayPlatform> query(PayPlatformQueryCriteria criteria, Pageable pageable) {
+//    public PageResult<PayPlatformDto> read(PayPlatformQueryCriteria criteria, Pageable pageable) {
+//        Page<PayPlatform> page = repository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root, criteria, criteriaBuilder), pageable);
+//        return PageUtil.toPage(page.map(mapper::toDto));
+//    }
+    public Page<PayPlatform> read(PayPlatformQueryCriteria criteria, Pageable pageable) {
         return repository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root, criteria, criteriaBuilder), pageable);
     }
 }

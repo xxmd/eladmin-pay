@@ -1,8 +1,10 @@
 package me.zhengjie.modules.pay.controller;
 
 import me.zhengjie.modules.pay.entity.PayMerchant;
-import me.zhengjie.modules.pay.entity.query.PayApiQueryCriteria;
+import me.zhengjie.modules.pay.entity.query.PayMerchantQueryCriteria;
 import me.zhengjie.modules.pay.service.PayMerchantService;
+import me.zhengjie.modules.pay.service.dto.PayMerchantDto;
+import me.zhengjie.utils.PageResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,21 +26,26 @@ public class PayMerchantController {
         service.create(entity);
     }
 
+    @DeleteMapping
+    @PreAuthorize("@el.check('pay:merchant:delete')")
+    public void delete(@RequestBody Set<Long> idSet) {
+        service.delete(idSet);
+    }
+
     @PostMapping
     @PreAuthorize("@el.check('pay:merchant:update')")
     public void update(@Validated @RequestBody PayMerchant entity) {
         service.update(entity);
     }
 
-    @DeleteMapping
-    @PreAuthorize("@el.check('pay:merchant:delete')")
-    public void delete(Set<Long> idSet) {
-        service.delete(idSet);
-    }
-
+//    @GetMapping
+//    @PreAuthorize("@el.check('pay:merchant:read')")
+//    public PageResult<PayMerchantDto> read(PayMerchantQueryCriteria criteria, Pageable pageable) {
+//        return service.read(criteria, pageable);
+//    }
     @GetMapping
-    @PreAuthorize("@el.check('pay:merchant:query')")
-    public Page<PayMerchant> read(PayApiQueryCriteria criteria, Pageable pageable) {
+    @PreAuthorize("@el.check('pay:merchant:read')")
+    public Page<PayMerchant> read(PayMerchantQueryCriteria criteria, Pageable pageable) {
         return service.read(criteria, pageable);
     }
 }

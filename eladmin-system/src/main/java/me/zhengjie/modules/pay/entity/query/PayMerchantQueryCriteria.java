@@ -7,12 +7,15 @@ import java.sql.Timestamp;
 import java.util.List;
 
 @Data
-public class PayApiQueryCriteria {
-    @Query(type = Query.Type.INNER_LIKE)
-    private String name;
+public class PayMerchantQueryCriteria {
+    @Query(type = Query.Type.EQUAL, propName = "id", joinName = "pay_platform")
+    private Long platformId;
 
     @Query(type = Query.Type.INNER_LIKE)
-    private String endpoint;
+    private String merchantId;
+
+    @Query(type = Query.Type.INNER_LIKE)
+    private String md5SecretKey;
 
     @Query(type = Query.Type.BETWEEN)
     private List<Timestamp> updateTime;
