@@ -1,6 +1,5 @@
 package me.zhengjie.modules.pay.entity;
 
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import me.zhengjie.base.BaseEntity;
@@ -18,7 +17,7 @@ public class PayPlatform extends BaseEntity {
 
     private String name;
 
-    private String endpoint;
+    private String hostname;
 
     private String website;
 

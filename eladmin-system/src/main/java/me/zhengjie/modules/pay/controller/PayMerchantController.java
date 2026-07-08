@@ -12,6 +12,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Set;
 
 @RestController
@@ -38,14 +39,15 @@ public class PayMerchantController {
         service.update(entity);
     }
 
-//    @GetMapping
-//    @PreAuthorize("@el.check('pay:merchant:read')")
-//    public PageResult<PayMerchantDto> read(PayMerchantQueryCriteria criteria, Pageable pageable) {
-//        return service.read(criteria, pageable);
-//    }
     @GetMapping
     @PreAuthorize("@el.check('pay:merchant:read')")
-    public Page<PayMerchant> read(PayMerchantQueryCriteria criteria, Pageable pageable) {
+    public PageResult<PayMerchantDto> read(PayMerchantQueryCriteria criteria, Pageable pageable) {
         return service.read(criteria, pageable);
+    }
+
+    @GetMapping("/findAll")
+    @PreAuthorize("@el.check('pay:merchant:read')")
+    public List<PayMerchantDto> findAll() {
+        return service.findAll();
     }
 }

@@ -15,7 +15,7 @@ public class PayMerchant extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long merchantId;
+    private int merchantId;
 
     @Column(name = "md5_secret_key")
     private String md5SecretKey;

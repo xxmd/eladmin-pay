@@ -45,7 +45,7 @@ public class PayPlatformController {
 //    }
     @GetMapping
     @PreAuthorize("@el.check('pay:platform:read')")
-    public Page<PayPlatform> read(PayPlatformQueryCriteria criteria, Pageable pageable) {
+    public PageResult<PayPlatformDto> read(PayPlatformQueryCriteria criteria, Pageable pageable) {
         return service.read(criteria, pageable);
     }
 }

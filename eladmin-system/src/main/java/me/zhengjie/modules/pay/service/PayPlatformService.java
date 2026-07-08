@@ -13,8 +13,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.Set;
 
@@ -26,7 +24,7 @@ public class PayPlatformService {
     @Autowired
     private PayPlatformMapper mapper;
 
-    public void create(@Validated @RequestBody PayPlatform entity) {
+    public void create(PayPlatform entity) {
         repository.save(entity);
     }
 
@@ -34,15 +32,12 @@ public class PayPlatformService {
         repository.deleteAllById(idSet);
     }
 
-    public void update(@Validated @RequestBody PayPlatform entity) {
+    public void update(PayPlatform entity) {
         repository.save(entity);
     }
 
-//    public PageResult<PayPlatformDto> read(PayPlatformQueryCriteria criteria, Pageable pageable) {
-//        Page<PayPlatform> page = repository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root, criteria, criteriaBuilder), pageable);
-//        return PageUtil.toPage(page.map(mapper::toDto));
-//    }
-    public Page<PayPlatform> read(PayPlatformQueryCriteria criteria, Pageable pageable) {
-        return repository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root, criteria, criteriaBuilder), pageable);
+    public PageResult<PayPlatformDto> read(PayPlatformQueryCriteria criteria, Pageable pageable) {
+        Page<PayPlatform> page = repository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root, criteria, criteriaBuilder), pageable);
+        return PageUtil.toPage(page.map(mapper::toDto));
     }
 }

@@ -13,9 +13,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.RequestBody;
 
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -26,7 +25,7 @@ public class PayMerchantService {
     @Autowired
     private PayMerchantMapper mapper;
 
-    public void create(@Validated @RequestBody PayMerchant entity) {
+    public void create(PayMerchant entity) {
         repository.save(entity);
     }
 
@@ -35,16 +34,17 @@ public class PayMerchantService {
         repository.deleteAllById(idSet);
     }
 
-    public void update(@Validated @RequestBody PayMerchant entity) {
+    public void update(PayMerchant entity) {
         repository.save(entity);
     }
 
-    //    public PageResult<PayMerchantDto> read(PayMerchantQueryCriteria criteria, Pageable pageable) {
-//        Page<PayMerchant> page = repository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root, criteria, criteriaBuilder), pageable);
-//        return PageUtil.toPage(page.map(mapper::toDto));
-//    }
-    public Page<PayMerchant> read(PayMerchantQueryCriteria criteria, Pageable pageable) {
-        return repository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root, criteria, criteriaBuilder), pageable);
-//        return PageUtil.toPage(page.map(mapper::toDto));
+    public PageResult<PayMerchantDto> read(PayMerchantQueryCriteria criteria, Pageable pageable) {
+        Page<PayMerchant> page = repository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root, criteria, criteriaBuilder), pageable);
+        return PageUtil.toPage(page.map(mapper::toDto));
+    }
+
+    public List<PayMerchantDto> findAll() {
+        List<PayMerchant> payMerchantList = repository.findAll();
+        return mapper.toDto(payMerchantList);
     }
 }
