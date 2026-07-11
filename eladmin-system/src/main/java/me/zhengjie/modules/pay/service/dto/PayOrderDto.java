@@ -2,13 +2,11 @@ package me.zhengjie.modules.pay.service.dto;
 
 import lombok.Data;
 import me.zhengjie.base.BaseDTO;
-import me.zhengjie.modules.pay.entity.PayMerchant;
-import me.zhengjie.modules.pay.entity.enums.PayMethod;
-import org.example.entity.enums.PayType;
+import me.zhengjie.modules.pay.entity.enums.PayStatus;
 
-import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 
 @Data
 public class PayOrderDto extends BaseDTO implements Serializable {
@@ -22,13 +20,15 @@ public class PayOrderDto extends BaseDTO implements Serializable {
 
     private Integer productQuantity;
 
-    private PayMethod payMethod;
-
     private String payUrl;
 
-    private BigDecimal paidAmount;
+    private PayStatus payStatus;
+
+    private Timestamp payTime;
 
     private String remark;
 
-    private PayMerchantDto merchant;
+    private PayMerchantMiddleDto payMerchant;
+
+    private PayMethodSmallDto payMethod;
 }

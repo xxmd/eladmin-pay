@@ -6,6 +6,7 @@ import lombok.Setter;
 import me.zhengjie.base.BaseEntity;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Getter
 @Setter
@@ -20,9 +21,17 @@ public class PayMerchant extends BaseEntity {
     @Column(name = "md5_secret_key")
     private String md5SecretKey;
 
+    private Integer sort;
+
+    private Boolean enable;
+
     private String remark;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "platform_id")
     private PayPlatform platform;
+
+    @ManyToMany
+    @JoinTable(name = "pay_merchant_method", joinColumns = @JoinColumn(name = "merchant_id"), inverseJoinColumns = @JoinColumn(name = "method_id"))
+    private List<PayMethod> payMethodList;
 }

@@ -10,23 +10,17 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
-public class PayPlatform extends BaseEntity {
+public class PayMethod extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
+    private String label;
 
-    private String domainName;
-
-    private String contact;
-
-    private Integer sort;
-
-    private Boolean enable;
+    private String value;
 
     private String remark;
 
-    @OneToMany(mappedBy = "platform")
-    private List<PayMerchant> merchantList;
+    @ManyToMany(mappedBy = "payMethodList")
+    private List<PayMerchant> payMerchantList;
 }

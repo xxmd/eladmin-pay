@@ -15,11 +15,13 @@ public class PayPlatformDto extends BaseDTO implements Serializable {
 
     private String name;
 
-    private String endpoint;
-
-    private String website;
+    private String domainName;
 
     private String contact;
+
+    private Integer sort;
+
+    private Boolean enable;
 
     private String remark;
 

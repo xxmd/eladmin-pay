@@ -13,10 +13,7 @@ public class PayPlatformQueryCriteria {
     private String name;
 
     @Query(type = Query.Type.INNER_LIKE)
-    private String endpoint;
-
-    @Query(type = Query.Type.INNER_LIKE)
-    private String website;
+    private String domainName;
 
     @Query(type = Query.Type.BETWEEN)
     private List<Timestamp> updateTime;

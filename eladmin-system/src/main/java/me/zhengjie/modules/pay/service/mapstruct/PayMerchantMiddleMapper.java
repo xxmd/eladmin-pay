@@ -17,17 +17,17 @@ package me.zhengjie.modules.pay.service.mapstruct;
 
 import me.zhengjie.base.BaseMapper;
 import me.zhengjie.modules.pay.entity.PayMerchant;
-import me.zhengjie.modules.pay.entity.PayOrder;
-import me.zhengjie.modules.pay.service.dto.PayMerchantDto;
-import me.zhengjie.modules.pay.service.dto.PayOrderDto;
+import me.zhengjie.modules.pay.service.dto.PayMerchantMiddleDto;
+import me.zhengjie.modules.pay.service.dto.PayMerchantSmallDto;
+import me.zhengjie.modules.system.service.mapstruct.DictSmallMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
 
 /**
- * @author Zheng Jie
- * @date 2019-04-10
- */
-@Mapper(componentModel = "spring", uses = {PayMerchantMapper.class, PayMethodSmallMapper.class}, unmappedTargetPolicy = ReportingPolicy.IGNORE)
-public interface PayOrderMapper extends BaseMapper<PayOrderDto, PayOrder> {
+* @author Zheng Jie
+* @date 2019-04-10
+*/
+@Mapper(componentModel = "spring", uses = {PayPlatformSmallMapper.class}, unmappedTargetPolicy = ReportingPolicy.IGNORE)
+public interface PayMerchantMiddleMapper extends BaseMapper<PayMerchantMiddleDto, PayMerchant> {
 
 }

@@ -1,12 +1,11 @@
 package me.zhengjie.modules.pay.repository;
 
+import me.zhengjie.modules.pay.entity.PayMethod;
 import me.zhengjie.modules.pay.entity.PayOrder;
-import me.zhengjie.modules.pay.entity.PayPlatform;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import java.util.Optional;
 
-public interface PayOrderRepository extends JpaRepository<PayOrder, Long>, JpaSpecificationExecutor<PayOrder> {
-    Optional<PayOrder> findByOrderNumber(String orderNumber);
+public interface PayMethodRepository extends JpaRepository<PayMethod, Long>, JpaSpecificationExecutor<PayMethod> {
 }

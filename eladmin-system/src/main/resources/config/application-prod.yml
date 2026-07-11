@@ -1,3 +1,5 @@
+epay:
+  notifyUrl: https://pay.ftq.ink/api/pay/order/notify
 #配置数据源
 spring:
   datasource:

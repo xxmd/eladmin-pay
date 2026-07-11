@@ -47,4 +47,8 @@ public class PayMerchantService {
         List<PayMerchant> payMerchantList = repository.findAll();
         return mapper.toDto(payMerchantList);
     }
+
+//    public EPayApi buildEPayApi() {
+//
+//    }
 }

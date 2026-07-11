@@ -3,11 +3,11 @@ package me.zhengjie.modules.pay.entity;
 import lombok.Getter;
 import lombok.Setter;
 import me.zhengjie.base.BaseEntity;
-import me.zhengjie.modules.pay.entity.enums.PayMethod;
-import org.example.entity.enums.PayType;
+import me.zhengjie.modules.pay.entity.enums.PayStatus;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 
 @Getter
 @Setter
@@ -17,26 +17,32 @@ public class PayOrder extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String orderNumber;
+
     private String productName;
 
     private BigDecimal productPrice;
 
     private Integer productQuantity;
 
-    @Enumerated(EnumType.STRING)
-    private PayMethod payMethod;
-
     private String payUrl;
 
-    private BigDecimal paidAmount;
+    @Enumerated(EnumType.STRING)
+    private PayStatus payStatus = PayStatus.UNPAID;
 
-    private String orderNumber;
+    private Timestamp payTime;
+
+    private String notifyParam;
 
     private String remark;
 
     @ManyToOne
     @JoinColumn(name = "merchant_id")
-    private PayMerchant merchant;
+    private PayMerchant payMerchant;
+
+    @ManyToOne
+    @JoinColumn(name = "method_id")
+    private PayMethod payMethod;
 
     public BigDecimal getTotalAmount() {
         if (productPrice == null || productQuantity == null) {

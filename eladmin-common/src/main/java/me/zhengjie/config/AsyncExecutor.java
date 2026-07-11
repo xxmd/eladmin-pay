@@ -98,4 +98,23 @@ public class AsyncExecutor implements AsyncConfigurer {
         executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
         return executor;
     }
+
+    @Bean("apiQueryExecutor")
+    public Executor apiQueryExecutor() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        // 核心线程数：IO密集型可以设置得大一些，比如 CPU核心数 * 2 或更多
+        executor.setCorePoolSize(20);
+        // 最大线程数
+        executor.setMaxPoolSize(50);
+        // 队列容量
+        executor.setQueueCapacity(100);
+        // 线程活跃时间（秒）
+        executor.setKeepAliveSeconds(60);
+        // 线程名字前缀，方便排查日志
+        executor.setThreadNamePrefix("Epay-Query-");
+        // 拒绝策略：如果队列满了，由调用者（主线程）自己执行
+        executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
+        executor.initialize();
+        return executor;
+    }
 }
