@@ -6,17 +6,15 @@ import io.github.xxmd.epay.api.EPayApiV1;
 import io.github.xxmd.epay.entity.enums.PayMethod;
 import io.github.xxmd.epay.entity.param.RedirectPayParam;
 import lombok.extern.slf4j.Slf4j;
-import me.zhengjie.modules.pay.entity.PayMerchant;
-import me.zhengjie.modules.pay.entity.PayOrder;
+import me.zhengjie.modules.pay.entity.EPayNotifyParam;
+import me.zhengjie.modules.pay.entity.Merchant;
+import me.zhengjie.modules.pay.entity.Method;
+import me.zhengjie.modules.pay.entity.Order;
 import me.zhengjie.modules.pay.entity.enums.PayStatus;
-import me.zhengjie.modules.pay.entity.query.PayOrderQueryCriteria;
-import me.zhengjie.modules.pay.repository.PayMerchantRepository;
-import me.zhengjie.modules.pay.repository.PayOrderRepository;
-import me.zhengjie.modules.pay.service.dto.EPayNotifyParam;
-import me.zhengjie.modules.pay.service.dto.PayOrderDto;
-import me.zhengjie.modules.pay.service.mapstruct.PayOrderMapper;
-import me.zhengjie.utils.PageResult;
-import me.zhengjie.utils.PageUtil;
+import me.zhengjie.modules.pay.service.query.OrderQueryCriteria;
+import me.zhengjie.modules.pay.repository.MerchantRepository;
+import me.zhengjie.modules.pay.repository.MethodRepository;
+import me.zhengjie.modules.pay.repository.OrderRepository;
 import me.zhengjie.utils.QueryHelp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,13 +24,9 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Locale;
-import java.util.Optional;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
@@ -42,21 +36,23 @@ public class PayOrderService {
     @Value("${epay.notifyUrl}")
     private String notifyUrl;
     @Autowired
-    private PayOrderRepository repository;
+    private OrderRepository repository;
     @Autowired
-    private PayOrderMapper mapper;
+    private MerchantRepository merchantRepository;
     @Autowired
-    private PayMerchantRepository merchantRepository;
+    private MethodRepository methodRepository;
     @Autowired
     private RedisTemplate redisTemplate;
     @Autowired
     private ObjectMapper objectMapper;
 
-    public void create(PayOrder entity) throws Exception {
+    public void create(Order entity) throws Exception {
         String orderNumber = generateOrderNumber();
         entity.setOrderNumber(orderNumber);
-        Optional<PayMerchant> merchantOptional = merchantRepository.findById(entity.getPayMerchant().getId());
-        merchantOptional.ifPresent(entity::setPayMerchant);
+        Optional<Merchant> merchantOptional = merchantRepository.findById(entity.getMerchant().getId());
+        merchantOptional.ifPresent(entity::setMerchant);
+        Optional<Method> methodOptional = methodRepository.findById(entity.getMethod().getId());
+        methodOptional.ifPresent(entity::setMethod);
         EPayApiV1 ePayApi = buildEPayApi(entity);
         RedirectPayParam redirectPayParam = buildRedirectPayParam(entity);
         String payUrl = ePayApi.pageRedirectPay(redirectPayParam);
@@ -79,27 +75,26 @@ public class PayOrderService {
         repository.deleteAllById(idSet);
     }
 
-    public void update(PayOrder entity) {
+    public void update(Order entity) {
         repository.save(entity);
     }
 
-    public PageResult<PayOrderDto> read(PayOrderQueryCriteria criteria, Pageable pageable) throws Exception {
-        Page<PayOrder> page = repository.findAll((root, criteriaQuery, criteriaBuilder) ->
+    public Page<Order> read(OrderQueryCriteria criteria, Pageable pageable) throws Exception {
+        return repository.findAll((root, criteriaQuery, criteriaBuilder) ->
                 QueryHelp.getPredicate(root, criteria, criteriaBuilder), pageable);
-        return PageUtil.toPage(page.map(mapper::toDto));
     }
 
-    public EPayApiV1 buildEPayApi(PayOrder entity) {
-        PayMerchant merchant = entity.getPayMerchant();
+    public EPayApiV1 buildEPayApi(Order entity) {
+        Merchant merchant = entity.getMerchant();
         String pid = String.valueOf(merchant.getMerchantId());
         String md5SecretKey = merchant.getMd5SecretKey();
         String domainName = merchant.getPlatform().getDomainName();
         return new EPayApiV1(pid, md5SecretKey, domainName);
     }
 
-    public RedirectPayParam buildRedirectPayParam(PayOrder entity) {
+    public RedirectPayParam buildRedirectPayParam(Order entity) {
         RedirectPayParam requestParam = new RedirectPayParam();
-        requestParam.setPayMethod(PayMethod.valueOfIgnoreCase(entity.getPayMethod().getValue()));
+        requestParam.setPayMethod(PayMethod.valueOf(entity.getMethod().getValue()));
         requestParam.setOutTradeNo(entity.getOrderNumber());
         requestParam.setNotifyUrl(notifyUrl);
         requestParam.setReturnUrl(notifyUrl);
@@ -112,20 +107,20 @@ public class PayOrderService {
     public boolean isNotifyParamValid(EPayNotifyParam notifyParam) throws JsonProcessingException {
         if (notifyParam.isValid()) {
             String orderNumber = notifyParam.getOutTradeNo();
-            Optional<PayOrder> orderOptional = repository.findByOrderNumber(orderNumber);
+            Optional<Order> orderOptional = repository.findByOrderNumber(orderNumber);
             if (orderOptional.isPresent()) {
                 TreeMap<String, Object> treeMap = parseReturnParam(notifyParam);
-                PayOrder payOrder = orderOptional.get();
-                if (payOrder.getPayStatus() == PayStatus.PAID) {
+                Order order = orderOptional.get();
+                if (order.getPayStatus() == PayStatus.PAID) {
                     return true;
                 }
-                EPayApiV1 ePayApi = buildEPayApi(payOrder);
+                EPayApiV1 ePayApi = buildEPayApi(order);
                 String signature = ePayApi.signParamMap(treeMap);
                 if (signature.equals(notifyParam.getSign())) {
-                    payOrder.setPayStatus(PayStatus.PAID);
-                    payOrder.setPayTime(new Timestamp(System.currentTimeMillis()));
-                    payOrder.setNotifyParam(objectMapper.writeValueAsString(notifyParam));
-                    repository.save(payOrder);
+                    order.setPayStatus(PayStatus.PAID);
+                    order.setPayTime(new Date());
+                    order.setNotifyParam(objectMapper.writeValueAsString(notifyParam));
+                    repository.save(order);
                     return true;
                 }
             }

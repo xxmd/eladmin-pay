@@ -1,12 +1,10 @@
 package me.zhengjie.modules.pay.service;
 
-import me.zhengjie.modules.pay.entity.PayMerchant;
-import me.zhengjie.modules.pay.entity.query.PayMerchantQueryCriteria;
-import me.zhengjie.modules.pay.repository.PayMerchantRepository;
-import me.zhengjie.modules.pay.service.dto.PayMerchantDto;
-import me.zhengjie.modules.pay.service.mapstruct.PayMerchantMapper;
-import me.zhengjie.utils.PageResult;
-import me.zhengjie.utils.PageUtil;
+import me.zhengjie.modules.pay.entity.Merchant;
+import me.zhengjie.modules.pay.service.dto.MerchantDto;
+import me.zhengjie.modules.pay.service.query.MerchantQueryCriteria;
+import me.zhengjie.modules.pay.repository.MerchantRepository;
+import me.zhengjie.modules.pay.service.mapstruct.MerchantMapper;
 import me.zhengjie.utils.QueryHelp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -21,11 +19,11 @@ import java.util.Set;
 @Transactional
 public class PayMerchantService {
     @Autowired
-    private PayMerchantRepository repository;
+    private MerchantRepository repository;
     @Autowired
-    private PayMerchantMapper mapper;
+    private MerchantMapper mapper;
 
-    public void create(PayMerchant entity) {
+    public void create(Merchant entity) {
         repository.save(entity);
     }
 
@@ -34,21 +32,15 @@ public class PayMerchantService {
         repository.deleteAllById(idSet);
     }
 
-    public void update(PayMerchant entity) {
+    public void update(Merchant entity) {
         repository.save(entity);
     }
 
-    public PageResult<PayMerchantDto> read(PayMerchantQueryCriteria criteria, Pageable pageable) {
-        Page<PayMerchant> page = repository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root, criteria, criteriaBuilder), pageable);
-        return PageUtil.toPage(page.map(mapper::toDto));
+    public Page<Merchant> read(MerchantQueryCriteria criteria, Pageable pageable) {
+        return repository.findAll((root, criteriaQuery, criteriaBuilder) -> QueryHelp.getPredicate(root, criteria, criteriaBuilder), pageable);
     }
 
-    public List<PayMerchantDto> findAll() {
-        List<PayMerchant> payMerchantList = repository.findAll();
-        return mapper.toDto(payMerchantList);
+    public List<MerchantDto> findAll() {
+        return mapper.toDto(repository.findAll());
     }
-
-//    public EPayApi buildEPayApi() {
-//
-//    }
 }

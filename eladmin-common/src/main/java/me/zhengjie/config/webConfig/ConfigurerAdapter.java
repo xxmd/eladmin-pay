@@ -29,6 +29,7 @@ import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +44,9 @@ import java.util.List;
 @EnableWebMvc
 public class ConfigurerAdapter implements WebMvcConfigurer {
 
-    /** 文件配置 */
+    /**
+     * 文件配置
+     */
     private final FileProperties properties;
 
     public ConfigurerAdapter(FileProperties properties) {
@@ -65,26 +68,40 @@ public class ConfigurerAdapter implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         FileProperties.ElPath path = properties.getPath();
-        String avatarUtl = "file:" + path.getAvatar().replace("\\","/");
-        String pathUtl = "file:" + path.getPath().replace("\\","/");
+        String avatarUtl = "file:" + path.getAvatar().replace("\\", "/");
+        String pathUtl = "file:" + path.getPath().replace("\\", "/");
         registry.addResourceHandler("/avatar/**").addResourceLocations(avatarUtl).setCachePeriod(0);
         registry.addResourceHandler("/file/**").addResourceLocations(pathUtl).setCachePeriod(0);
         registry.addResourceHandler("/**").addResourceLocations("classpath:/META-INF/resources/").setCachePeriod(0);
     }
 
+//    @Override
+//    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
+//        // 配置 FastJsonHttpMessageConverter
+//        FastJsonHttpMessageConverter converter = new FastJsonHttpMessageConverter();
+//        List<MediaType> supportMediaTypeList = new ArrayList<>();
+//        supportMediaTypeList.add(MediaType.APPLICATION_JSON);
+//        FastJsonConfig config = new FastJsonConfig();
+//        config.setDateFormat("yyyy-MM-dd HH:mm:ss");
+//        // 开启引用检测
+//        config.setWriterFeatures(JSONWriter.Feature.ReferenceDetection);
+//        converter.setFastJsonConfig(config);
+//        converter.setSupportedMediaTypes(supportMediaTypeList);
+//        converter.setDefaultCharset(StandardCharsets.UTF_8);
+//        converters.add(converter);
+//    }
+
     @Override
-    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
-        // 配置 FastJsonHttpMessageConverter
-        FastJsonHttpMessageConverter converter = new FastJsonHttpMessageConverter();
-        List<MediaType> supportMediaTypeList = new ArrayList<>();
-        supportMediaTypeList.add(MediaType.APPLICATION_JSON);
-        FastJsonConfig config = new FastJsonConfig();
-        config.setDateFormat("yyyy-MM-dd HH:mm:ss");
-        // 开启引用检测
-        config.setWriterFeatures(JSONWriter.Feature.ReferenceDetection);
-        converter.setFastJsonConfig(config);
-        converter.setSupportedMediaTypes(supportMediaTypeList);
-        converter.setDefaultCharset(StandardCharsets.UTF_8);
-        converters.add(converter);
+    public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
+        for (HttpMessageConverter<?> converter : converters) {
+            if (converter instanceof org.springframework.http.converter.json.MappingJackson2HttpMessageConverter) {
+                org.springframework.http.converter.json.MappingJackson2HttpMessageConverter jacksonConverter =
+                        (org.springframework.http.converter.json.MappingJackson2HttpMessageConverter) converter;
+                com.fasterxml.jackson.databind.ObjectMapper objectMapper = jacksonConverter.getObjectMapper();
+                objectMapper.setTimeZone(java.util.TimeZone.getTimeZone("Asia/Shanghai"));
+                objectMapper.setDateFormat(new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
+                break;
+            }
+        }
     }
 }

@@ -1,14 +1,10 @@
 package me.zhengjie.modules.pay.controller;
 
-import me.zhengjie.modules.pay.entity.PayMethod;
-import me.zhengjie.modules.pay.entity.query.PayPlatformQueryCriteria;
+import me.zhengjie.modules.pay.entity.Method;
 import me.zhengjie.modules.pay.service.PayMethodService;
-import me.zhengjie.modules.pay.service.PayPlatformService;
-import me.zhengjie.modules.pay.service.dto.PayMethodDto;
-import me.zhengjie.modules.pay.service.dto.PayMethodSmallDto;
-import me.zhengjie.modules.pay.service.dto.PayPlatformDto;
-import me.zhengjie.utils.PageResult;
+import me.zhengjie.modules.pay.service.dto.MethodDto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -19,13 +15,13 @@ import java.util.Set;
 
 @RestController
 @RequestMapping("/api/pay/method")
-public class PayMethodController {
+public class MethodController {
     @Autowired
     private PayMethodService service;
 
-    @PutMapping
+    @PostMapping
     @PreAuthorize("@el.check('pay:method:create')")
-    public void create(@Validated @RequestBody PayMethod entity) {
+    public void create(@Validated @RequestBody Method entity) {
         service.create(entity);
     }
 
@@ -35,21 +31,21 @@ public class PayMethodController {
         service.delete(idSet);
     }
 
-    @PostMapping
+    @PutMapping
     @PreAuthorize("@el.check('pay:method:update')")
-    public void update(@Validated @RequestBody PayMethod entity) {
+    public void update(@Validated @RequestBody Method entity) {
         service.update(entity);
     }
 
     @GetMapping
     @PreAuthorize("@el.check('pay:method:read')")
-    public PageResult<PayMethodDto> read(Pageable pageable) {
+    public Page<Method> read(Pageable pageable) {
         return service.read(pageable);
     }
 
     @GetMapping("/findAll")
     @PreAuthorize("@el.check('pay:method:read')")
-    public List<PayMethodSmallDto> findAll() {
+    public List<MethodDto> findAll() {
         return service.findAll();
     }
 }

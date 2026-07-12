@@ -1,4 +1,4 @@
-package me.zhengjie.modules.pay.entity.query;
+package me.zhengjie.modules.pay.service.query;
 
 import lombok.Data;
 import me.zhengjie.annotation.Query;
@@ -7,8 +7,8 @@ import java.sql.Timestamp;
 import java.util.List;
 
 @Data
-public class PayMerchantQueryCriteria {
-    @Query(type = Query.Type.EQUAL, propName = "id", joinName = "pay_platform")
+public class MerchantQueryCriteria {
+    @Query(type = Query.Type.EQUAL, propName = "id", joinName = "platform")
     private Long platformId;
 
     @Query(type = Query.Type.INNER_LIKE)

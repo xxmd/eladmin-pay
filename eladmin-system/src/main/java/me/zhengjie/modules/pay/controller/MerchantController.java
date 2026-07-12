@@ -1,10 +1,9 @@
 package me.zhengjie.modules.pay.controller;
 
-import me.zhengjie.modules.pay.entity.PayMerchant;
-import me.zhengjie.modules.pay.entity.query.PayMerchantQueryCriteria;
+import me.zhengjie.modules.pay.entity.Merchant;
+import me.zhengjie.modules.pay.service.dto.MerchantDto;
+import me.zhengjie.modules.pay.service.query.MerchantQueryCriteria;
 import me.zhengjie.modules.pay.service.PayMerchantService;
-import me.zhengjie.modules.pay.service.dto.PayMerchantDto;
-import me.zhengjie.utils.PageResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,13 +16,13 @@ import java.util.Set;
 
 @RestController
 @RequestMapping("/api/pay/merchant")
-public class PayMerchantController {
+public class MerchantController {
     @Autowired
     private PayMerchantService service;
 
-    @PutMapping
+    @PostMapping
     @PreAuthorize("@el.check('pay:merchant:create')")
-    public void create(@Validated @RequestBody PayMerchant entity) {
+    public void create(@Validated @RequestBody Merchant entity) {
         service.create(entity);
     }
 
@@ -33,21 +32,21 @@ public class PayMerchantController {
         service.delete(idSet);
     }
 
-    @PostMapping
+    @PutMapping
     @PreAuthorize("@el.check('pay:merchant:update')")
-    public void update(@Validated @RequestBody PayMerchant entity) {
+    public void update(@Validated @RequestBody Merchant entity) {
         service.update(entity);
     }
 
     @GetMapping
     @PreAuthorize("@el.check('pay:merchant:read')")
-    public PageResult<PayMerchantDto> read(PayMerchantQueryCriteria criteria, Pageable pageable) {
+    public Page<Merchant> read(MerchantQueryCriteria criteria, Pageable pageable) {
         return service.read(criteria, pageable);
     }
 
     @GetMapping("/findAll")
     @PreAuthorize("@el.check('pay:merchant:read')")
-    public List<PayMerchantDto> findAll() {
+    public List<MerchantDto> findAll() {
         return service.findAll();
     }
 }

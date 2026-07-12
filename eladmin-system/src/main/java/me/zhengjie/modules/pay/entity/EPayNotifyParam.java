@@ -1,4 +1,4 @@
-package me.zhengjie.modules.pay.service.dto;
+package me.zhengjie.modules.pay.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;

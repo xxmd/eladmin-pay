@@ -1,6 +1,5 @@
-package me.zhengjie.modules.pay.entity.query;
+package me.zhengjie.modules.pay.service.query;
 
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import me.zhengjie.annotation.Query;
 
@@ -8,7 +7,7 @@ import java.sql.Timestamp;
 import java.util.List;
 
 @Data
-public class PayPlatformQueryCriteria {
+public class PlatformQueryCriteria {
     @Query(type = Query.Type.INNER_LIKE)
     private String name;
 

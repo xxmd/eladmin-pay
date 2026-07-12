@@ -1,6 +1,6 @@
 package me.zhengjie.modules.pay.entity;
 
-import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.Setter;
 import me.zhengjie.base.BaseEntity;
@@ -11,7 +11,8 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
-public class PayMerchant extends BaseEntity {
+@Table(name = "pay_merchant")
+public class Merchant extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -23,15 +24,17 @@ public class PayMerchant extends BaseEntity {
 
     private Integer sort;
 
-    private Boolean enable;
+    private Boolean enabled;
 
     private String remark;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "platform_id")
-    private PayPlatform platform;
+    @JsonIgnoreProperties("merchantList")
+    private Platform platform;
 
     @ManyToMany
     @JoinTable(name = "pay_merchant_method", joinColumns = @JoinColumn(name = "merchant_id"), inverseJoinColumns = @JoinColumn(name = "method_id"))
-    private List<PayMethod> payMethodList;
+    @JsonIgnoreProperties("merchantList")
+    private List<Method> methodList;
 }

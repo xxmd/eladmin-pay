@@ -56,13 +56,11 @@ public class BaseEntity implements Serializable {
     @CreationTimestamp
     @Column(name = "create_time", updatable = false)
     @ApiModelProperty(value = "创建时间: yyyy-MM-dd HH:mm:ss", hidden = true)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private Timestamp createTime;
 
     @UpdateTimestamp
     @Column(name = "update_time")
     @ApiModelProperty(value = "更新时间: yyyy-MM-dd HH:mm:ss", hidden = true)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private Timestamp updateTime;
 
     /* 分组校验 */

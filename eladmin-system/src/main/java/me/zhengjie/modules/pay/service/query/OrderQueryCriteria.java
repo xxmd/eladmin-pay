@@ -1,4 +1,4 @@
-package me.zhengjie.modules.pay.entity.query;
+package me.zhengjie.modules.pay.service.query;
 
 import io.github.xxmd.epay.entity.enums.PayMethod;
 import lombok.Data;
@@ -9,15 +9,15 @@ import java.sql.Timestamp;
 import java.util.List;
 
 @Data
-public class PayOrderQueryCriteria {
+public class OrderQueryCriteria {
     @Query(type = Query.Type.INNER_LIKE)
     private String orderNumber;
 
-    @Query(type = Query.Type.EQUAL, propName = "id", joinName = "pay_merchant")
-    private Long payMerchantId;
+    @Query(type = Query.Type.EQUAL, propName = "id", joinName = "merchant")
+    private Long merchantId;
 
-    @Query(type = Query.Type.EQUAL, propName = "id", joinName = "pay_method")
-    private Long payMethodId;
+    @Query(type = Query.Type.EQUAL, propName = "id", joinName = "method")
+    private Long methodId;
 
     @Query(type = Query.Type.INNER_LIKE)
     private String productName;

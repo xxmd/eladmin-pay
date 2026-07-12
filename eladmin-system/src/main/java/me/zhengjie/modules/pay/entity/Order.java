@@ -1,5 +1,7 @@
 package me.zhengjie.modules.pay.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.Setter;
 import me.zhengjie.base.BaseEntity;
@@ -8,11 +10,13 @@ import me.zhengjie.modules.pay.entity.enums.PayStatus;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.Date;
 
 @Getter
 @Setter
 @Entity
-public class PayOrder extends BaseEntity {
+@Table(name = "pay_order")
+public class Order extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -30,7 +34,7 @@ public class PayOrder extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private PayStatus payStatus = PayStatus.UNPAID;
 
-    private Timestamp payTime;
+    private Date payTime;
 
     private String notifyParam;
 
@@ -38,11 +42,13 @@ public class PayOrder extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "merchant_id")
-    private PayMerchant payMerchant;
+    @JsonIgnoreProperties(value = {"methodList"})
+    private Merchant merchant;
 
     @ManyToOne
     @JoinColumn(name = "method_id")
-    private PayMethod payMethod;
+    @JsonIgnoreProperties(value = {"merchantList"})
+    private Method method;
 
     public BigDecimal getTotalAmount() {
         if (productPrice == null || productQuantity == null) {
